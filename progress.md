@@ -64,10 +64,10 @@
 - [x] **5.3** Final mentor review and sign-off.
 
 #### Phase 6: Production Deployment (CLI Execution Guide)
-- [ ] **6.1** Stage and commit code cleanly via Git CLI (`git add .`, `git commit`).
-- [ ] **6.2** Create remote GitHub repository via GitHub CLI (`gh repo create`) or push to existing origin.
-- [ ] **6.3** Link Vercel project via CLI (`vercel link`).
-- [ ] **6.4** Set production environment variables via CLI (`vercel env add GEMINI_API_KEY`).
+- [x] **6.1** Stage and commit code cleanly via Git CLI (`git add .`, `git commit`).
+- [x] **6.2** Create remote GitHub repository via GitHub CLI (`gh repo create`) and push all application files to origin (`Main`).
+- [ ] **6.3** Link Vercel project via CLI (`vercel link`) or Vercel Web Dashboard.
+- [ ] **6.4** Set production environment variables via CLI (`vercel env add GEMINI_API_KEY`) or Dashboard.
 - [ ] **6.5** Trigger live production deployment (`vercel --prod`).
 - [ ] **6.6** Verify live public URL and real-time streaming endpoint.
 
