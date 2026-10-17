@@ -7,7 +7,7 @@ A production-ready full-stack AI SaaS application that generates high-potential 
 ## 🌟 Key Features
 
 - **⚡ Real-Time SSE Streaming**: Token-by-token streaming generation using HTTP Server-Sent Events (`text/event-stream`), avoiding request timeouts on long LLM responses.
-- **🆓 Google Gemini Free Tier Native**: Integrated with Google AI Studio's free tier via Gemini's OpenAI-compatible endpoint (`gemini-1.5-flash`), eliminating paid API barriers.
+- **🆓 Google Gemini Free Tier Native**: Integrated with Google AI Studio's free tier via Gemini's OpenAI-compatible endpoint (`gemini-2.5-flash`), eliminating paid API barriers.
 - **🔄 Universal LLM Support & Demo Mode**:
   - `GEMINI_API_KEY`: Uses free-tier Google Gemini model.
   - `OPENAI_API_KEY`: Uses OpenAI models if configured.
@@ -34,7 +34,7 @@ sequenceDiagram
 
     User->>Next: Selects topic / clicks "Generate Idea"
     Next->>Fast: Opens EventSource connection (`/api?topic=...`)
-    Fast->>Gemini: Requests streaming completion (gemini-1.5-flash)
+    Fast->>Gemini: Requests streaming completion (gemini-2.5-flash)
     loop Token Streaming
         Gemini-->>Fast: Yields streaming chunks
         Fast-->>Next: Sends SSE events (`data: <line>\n\n`)
@@ -63,7 +63,7 @@ Open `.env` (or `saas/.env`) and add your Gemini API key:
 GEMINI_API_KEY=your_actual_gemini_api_key_here
 
 # Model configuration (default: fast, generous free quota)
-GEMINI_MODEL=gemini-1.5-flash
+GEMINI_MODEL=gemini-2.5-flash
 ```
 
 *(Note: If you leave `GEMINI_API_KEY` blank, the app will automatically run in Demo Mock Stream mode!)*
@@ -133,7 +133,7 @@ Visit **`http://localhost:3000`** in your browser!
    - Using Server-Sent Events (SSE) gives immediate feedback (time-to-first-token < 500ms) with interactive live markdown rendering.
 
 2. **Cost Optimization with Free Tier**:
-   - By leveraging Google Gemini's OpenAI-compatible endpoint with `gemini-1.5-flash`, the application runs completely cost-free on the Google AI Studio free tier.
+   - By leveraging Google Gemini's OpenAI-compatible endpoint with `gemini-2.5-flash`, the application runs completely cost-free on the Google AI Studio free tier.
 
 3. **Graceful Degradation (Chaos Resilience)**:
    - If an API key is missing, network is offline, or rate limits occur, the application catches the event and falls back to realistic simulation rather than crashing.

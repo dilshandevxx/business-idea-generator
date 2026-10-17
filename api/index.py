@@ -40,8 +40,12 @@ def get_ai_client():
     if gemini_key:
         from openai import OpenAI
         # Google Gemini supports the OpenAI-compatible REST endpoint
-        # Free tier model: gemini-1.5-flash or gemini-2.0-flash
-        model = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+        # Free tier model: gemini-2.5-flash or gemini-2.0-flash
+        model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
+        # Automatically upgrade deprecated 1.5/1.0 models to 2.5-flash
+        if model in ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro", "gemini-pro"]:
+            model = "gemini-2.5-flash"
+
         client = OpenAI(
             api_key=gemini_key,
             base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
