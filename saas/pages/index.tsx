@@ -282,14 +282,14 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-[#f4f4f5] flex flex-col antialiased">
+    <div className="h-screen w-screen overflow-hidden bg-[#09090b] text-[#f4f4f5] flex flex-col antialiased">
       <Head>
         <title>Venture Studio — Linear-Grade Startup Architect</title>
         <meta name="description" content="AI Venture Brief Synthesizer with Server-Sent Events" />
       </Head>
 
       {/* Top Application Header (Linear Style) */}
-      <header className="h-12 border-b border-[#27272a] bg-[#0c0c0e] px-4 flex items-center justify-between text-xs select-none z-30">
+      <header className="h-12 flex-shrink-0 border-b border-[#27272a] bg-[#0c0c0e] px-4 flex items-center justify-between text-xs select-none z-30">
         {/* Left Workspace Identity */}
         <div className="flex items-center gap-3">
           <button
@@ -354,12 +354,12 @@ export default function Home() {
       </header>
 
       {/* Main Studio Split Frame */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Control Sidebar */}
+      <div className="flex-1 flex overflow-hidden min-h-0 w-full">
+        {/* Left Control Sidebar - permanently fixed height, internal scroll */}
         {isSidebarOpen && (
-          <aside className="w-80 flex-shrink-0 border-r border-[#27272a] bg-[#0c0c0e] flex flex-col text-xs select-none z-20">
+          <aside className="w-80 flex-shrink-0 h-full border-r border-[#27272a] bg-[#0c0c0e] flex flex-col text-xs select-none z-20 overflow-hidden">
             {/* Sidebar View Tabs */}
-            <div className="p-3 border-b border-[#27272a] flex items-center gap-1">
+            <div className="p-3 flex-shrink-0 border-b border-[#27272a] flex items-center gap-1">
               <button
                 onClick={() => setSidebarTab("builder")}
                 className={`flex-1 py-1.5 px-2 rounded-md font-medium text-center transition-all ${
@@ -387,7 +387,7 @@ export default function Home() {
 
             {/* Tab 1: Builder Controls */}
             {sidebarTab === "builder" ? (
-              <div className="flex-1 overflow-y-auto p-4 space-y-5">
+              <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-5">
                 {/* Sector Selector */}
                 <div>
                   <label className="block text-[11px] font-semibold text-[#a1a1aa] uppercase tracking-wider mb-2 font-mono">
@@ -496,7 +496,7 @@ export default function Home() {
               </div>
             ) : (
               /* Tab 2: History List */
-              <div className="flex-1 overflow-y-auto p-3 space-y-2">
+              <div className="flex-1 overflow-y-auto min-h-0 p-3 space-y-2">
                 <div className="flex items-center justify-between pb-2 border-b border-[#27272a] text-[11px] text-[#71717a]">
                   <span>PAST GENERATIONS</span>
                   {history.length > 0 && (
@@ -542,117 +542,119 @@ export default function Home() {
           </aside>
         )}
 
-        {/* Right Main Canvas (Executive Startup Brief) */}
-        <main className="flex-1 overflow-y-auto bg-[#09090b] p-6 lg:p-10 flex flex-col max-w-5xl mx-auto w-full">
-          {/* Executive Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-            <div className="p-3.5 rounded-lg linear-panel">
-              <span className="text-[10px] font-mono text-[#71717a] uppercase tracking-wider block mb-1">
-                MARKET SIZE (TAM)
-              </span>
-              <span className="text-base font-semibold text-white font-mono">
-                {SECTORS.find((s) => s.id === selectedSector)?.tam || "$40B+ TAM"}
-              </span>
-            </div>
-
-            <div className="p-3.5 rounded-lg linear-panel">
-              <span className="text-[10px] font-mono text-[#71717a] uppercase tracking-wider block mb-1">
-                FEASIBILITY SCORE
-              </span>
-              <span className="text-base font-semibold text-emerald-400 font-mono">
-                94 / 100
-              </span>
-            </div>
-
-            <div className="p-3.5 rounded-lg linear-panel">
-              <span className="text-[10px] font-mono text-[#71717a] uppercase tracking-wider block mb-1">
-                TIME TO MVP
-              </span>
-              <span className="text-base font-semibold text-white font-mono">
-                14 Days
-              </span>
-            </div>
-
-            <div className="p-3.5 rounded-lg linear-panel">
-              <span className="text-[10px] font-mono text-[#71717a] uppercase tracking-wider block mb-1">
-                DEFENSIBILITY
-              </span>
-              <span className="text-base font-semibold text-indigo-400 font-mono">
-                High Moat
-              </span>
-            </div>
-          </div>
-
-          {/* Error Banner */}
-          {errorMsg && (
-            <div className="mb-6 p-4 rounded-lg bg-red-950/30 border border-red-900/50 text-red-300 text-xs flex items-start gap-3">
-              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="font-semibold mb-0.5">Stream Error</p>
-                <p className="text-[#a1a1aa] font-mono">{errorMsg}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Dossier Document Container */}
-          <div className="flex-1 linear-panel rounded-xl p-8 lg:p-10 relative">
-            {/* Action Bar inside Dossier */}
-            <div className="flex items-center justify-between pb-6 mb-6 border-b border-[#27272a]">
-              <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${isGenerating ? "bg-amber-400 animate-pulse" : "bg-emerald-400"}`} />
-                <span className="text-xs font-mono uppercase tracking-wider text-[#a1a1aa]">
-                  {isGenerating ? "Streaming Response..." : "Executive Venture Dossier"}
+        {/* Right Main Canvas (Executive Startup Brief) - independently scrollable */}
+        <main className="flex-1 h-full min-h-0 overflow-y-auto bg-[#09090b]">
+          <div className="max-w-5xl mx-auto w-full p-6 lg:p-10 flex flex-col min-h-full">
+            {/* Executive Metrics Bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+              <div className="p-3.5 rounded-lg linear-panel">
+                <span className="text-[10px] font-mono text-[#71717a] uppercase tracking-wider block mb-1">
+                  MARKET SIZE (TAM)
+                </span>
+                <span className="text-base font-semibold text-white font-mono">
+                  {SECTORS.find((s) => s.id === selectedSector)?.tam || "$40B+ TAM"}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleSaveToHistory}
-                  disabled={!idea}
-                  className="px-2.5 py-1 rounded-md text-xs font-medium linear-btn-secondary disabled:opacity-40"
-                >
-                  <Bookmark className="w-3.5 h-3.5 inline mr-1" />
-                  <span>{saved ? "Saved" : "Save to History"}</span>
-                </button>
+              <div className="p-3.5 rounded-lg linear-panel">
+                <span className="text-[10px] font-mono text-[#71717a] uppercase tracking-wider block mb-1">
+                  FEASIBILITY SCORE
+                </span>
+                <span className="text-base font-semibold text-emerald-400 font-mono">
+                  94 / 100
+                </span>
+              </div>
 
-                <button
-                  onClick={handleCopy}
-                  disabled={!idea}
-                  className="px-2.5 py-1 rounded-md text-xs font-medium linear-btn-secondary disabled:opacity-40"
-                >
-                  <Copy className="w-3.5 h-3.5 inline mr-1" />
-                  <span>{copied ? "Copied" : "Copy Markdown"}</span>
-                </button>
+              <div className="p-3.5 rounded-lg linear-panel">
+                <span className="text-[10px] font-mono text-[#71717a] uppercase tracking-wider block mb-1">
+                  TIME TO MVP
+                </span>
+                <span className="text-base font-semibold text-white font-mono">
+                  14 Days
+                </span>
+              </div>
+
+              <div className="p-3.5 rounded-lg linear-panel">
+                <span className="text-[10px] font-mono text-[#71717a] uppercase tracking-wider block mb-1">
+                  DEFENSIBILITY
+                </span>
+                <span className="text-base font-semibold text-indigo-400 font-mono">
+                  High Moat
+                </span>
               </div>
             </div>
 
-            {/* Markdown Body */}
-            {isGenerating && !idea ? (
-              <div className="py-24 flex flex-col items-center justify-center text-center space-y-3">
-                <div className="w-10 h-10 rounded-lg bg-[#18181b] border border-[#27272a] flex items-center justify-center text-[#a1a1aa]">
-                  <RefreshCw className="w-5 h-5 animate-spin" />
+            {/* Error Banner */}
+            {errorMsg && (
+              <div className="mb-6 p-4 rounded-lg bg-red-950/30 border border-red-900/50 text-red-300 text-xs flex items-start gap-3">
+                <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold mb-0.5">Stream Error</p>
+                  <p className="text-[#a1a1aa] font-mono">{errorMsg}</p>
                 </div>
-                <p className="text-sm font-medium text-white">Synthesizing Venture Blueprint...</p>
-                <p className="text-xs text-[#71717a] font-mono max-w-sm">
-                  Querying Gemini 2.5 Flash for market architecture, unit economics and technical moats.
-                </p>
-              </div>
-            ) : (
-              <div className="markdown-brief">
-                <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
-                  {idea}
-                </ReactMarkdown>
-                {isGenerating && (
-                  <span className="inline-block w-2 h-4 ml-1 bg-white animate-pulse" />
-                )}
               </div>
             )}
-          </div>
 
-          {/* Minimalist Footer */}
-          <footer className="mt-8 text-center text-xs font-mono text-[#52525b]">
-            Linear-Grade Venture Studio • Next.js Pages Router + FastAPI Serverless SSE
-          </footer>
+            {/* Dossier Document Container */}
+            <div className="flex-1 linear-panel rounded-xl p-8 lg:p-10 relative">
+              {/* Action Bar inside Dossier */}
+              <div className="flex items-center justify-between pb-6 mb-6 border-b border-[#27272a]">
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${isGenerating ? "bg-amber-400 animate-pulse" : "bg-emerald-400"}`} />
+                  <span className="text-xs font-mono uppercase tracking-wider text-[#a1a1aa]">
+                    {isGenerating ? "Streaming Response..." : "Executive Venture Dossier"}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleSaveToHistory}
+                    disabled={!idea}
+                    className="px-2.5 py-1 rounded-md text-xs font-medium linear-btn-secondary disabled:opacity-40"
+                  >
+                    <Bookmark className="w-3.5 h-3.5 inline mr-1" />
+                    <span>{saved ? "Saved" : "Save to History"}</span>
+                  </button>
+
+                  <button
+                    onClick={handleCopy}
+                    disabled={!idea}
+                    className="px-2.5 py-1 rounded-md text-xs font-medium linear-btn-secondary disabled:opacity-40"
+                  >
+                    <Copy className="w-3.5 h-3.5 inline mr-1" />
+                    <span>{copied ? "Copied" : "Copy Markdown"}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Markdown Body */}
+              {isGenerating && !idea ? (
+                <div className="py-24 flex flex-col items-center justify-center text-center space-y-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#18181b] border border-[#27272a] flex items-center justify-center text-[#a1a1aa]">
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                  </div>
+                  <p className="text-sm font-medium text-white">Synthesizing Venture Blueprint...</p>
+                  <p className="text-xs text-[#71717a] font-mono max-w-sm">
+                    Querying Gemini 2.5 Flash for market architecture, unit economics and technical moats.
+                  </p>
+                </div>
+              ) : (
+                <div className="markdown-brief">
+                  <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+                    {idea}
+                  </ReactMarkdown>
+                  {isGenerating && (
+                    <span className="inline-block w-2 h-4 ml-1 bg-white animate-pulse" />
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Minimalist Footer */}
+            <footer className="mt-auto pt-8 pb-4 text-center text-xs font-mono text-[#52525b]">
+              Linear-Grade Venture Studio • Next.js Pages Router + FastAPI Serverless SSE
+            </footer>
+          </div>
         </main>
       </div>
     </div>
