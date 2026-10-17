@@ -3,8 +3,6 @@
 
 > **Project Mission**: Build an AI-powered SaaS Full-Stack Application (**Business Idea Generator**) featuring a Next.js (TypeScript + Tailwind CSS) frontend and a Python FastAPI backend with real-time Server-Sent Events (SSE) streaming and Markdown rendering.
 >
-> **Scope Note**: Focused strictly on the application development, architecture, local integration, and production-ready build (external cloud/CI/CD operations like GitHub Actions/Vercel excluded per assignment instructions).
->
 > **Persistent Tracking Rule**: This file is the **Single Source of Truth** for tracking project phases. When opening a new chat, review this file to resume from the current phase.
 
 ---
@@ -18,6 +16,7 @@
 | **Phase 3** | Frontend UI, Streaming SSE Consumer & Markdown Rendering | [x] Completed |
 | **Phase 4** | Full-Stack Local Integration, Verification & Production Build | [x] Completed |
 | **Phase 5** | Developer Guide, README & Assignment Submission Documentation | [x] Completed |
+| **Phase 6** | Production Deployment Guide (GitHub CLI & Vercel CLI) | [/] In Progress (Guided) |
 
 ---
 
@@ -64,6 +63,14 @@
 - [x] **5.2** Provide handy cross-platform run script (`run_dev.ps1`) for starting both frontend and backend seamlessly.
 - [x] **5.3** Final mentor review and sign-off.
 
+#### Phase 6: Production Deployment (CLI Execution Guide)
+- [ ] **6.1** Stage and commit code cleanly via Git CLI (`git add .`, `git commit`).
+- [ ] **6.2** Create remote GitHub repository via GitHub CLI (`gh repo create`) or push to existing origin.
+- [ ] **6.3** Link Vercel project via CLI (`vercel link`).
+- [ ] **6.4** Set production environment variables via CLI (`vercel env add GEMINI_API_KEY`).
+- [ ] **6.5** Trigger live production deployment (`vercel --prod`).
+- [ ] **6.6** Verify live public URL and real-time streaming endpoint.
+
 ---
 
 ### 📝 Notes & Activity Log
@@ -73,4 +80,5 @@
 - **2026-10-17**: Added native support for **Google Gemini Free API Key** (`gemini-1.5-flash`) via OpenAI-compatible endpoint.
 - **2026-10-17**: Installed markdown rendering pipeline (`react-markdown`, `remark-gfm`, `remark-breaks`, `lucide-react`).
 - **2026-10-17**: Built interactive frontend with preset topics, custom topic input, SSE consumer, and copy-to-clipboard.
-- **2026-10-17**: Successfully passed `npm run build` with zero errors. All phases verified.
+- **2026-10-17**: Successfully passed `npm run build` with zero errors. All local phases verified.
+- **2026-10-17**: Formulated step-by-step CLI production deployment guide for GitHub and Vercel.
