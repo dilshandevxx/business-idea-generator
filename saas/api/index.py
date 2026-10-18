@@ -2,9 +2,10 @@ import os
 import time
 from typing import Optional
 from pathlib import Path
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi_clerk_auth import ClerkConfig, ClerkHTTPBearer
 from dotenv import load_dotenv
 
 # Search and load .env from current directory or parent directories
@@ -16,11 +17,11 @@ else:
 
 app = FastAPI(
     title="Business Idea Generator API",
-    description="Real-time Streaming AI API supporting Google Gemini (Free Tier) and OpenAI",
-    version="1.0.0"
+    description="Real-time Streaming AI API with Clerk Authentication supporting Google Gemini and OpenAI",
+    version="2.0.0"
 )
 
-# Enable CORS so Next.js frontend can communicate with FastAPI locally
+# Enable CORS so Next.js frontend can communicate with FastAPI
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -28,6 +29,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 🔐 Clerk Authentication Configuration (Day 3 Feature)
+clerk_jwks_url = os.getenv("CLERK_JWKS_URL", "").strip()
+clerk_guard = ClerkHTTPBearer(ClerkConfig(jwks_url=clerk_jwks_url)) if clerk_jwks_url else None
+
+
+async def get_current_user(request: Request) -> str:
+    """
+    Verifies JWT token using Clerk's JWKS public keys.
+    Returns user_id (sub claim from JWT) or 'anonymous'.
+    """
+    if clerk_guard:
+        creds = await clerk_guard(request)
+        if creds:
+            # We now know which user is making the request!
+            return creds.decoded.get("sub", "anonymous")
+    return "anonymous"
+
 
 def get_ai_client():
     """
@@ -40,7 +59,6 @@ def get_ai_client():
     if gemini_key:
         from openai import OpenAI
         # Google Gemini supports the OpenAI-compatible REST endpoint
-        # Free tier model: gemini-2.5-flash or gemini-2.0-flash
         model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
         # Automatically upgrade deprecated 1.5/1.0 models to 2.5-flash
         if model in ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro", "gemini-pro"]:
@@ -85,16 +103,15 @@ DEMO_IDEAS = [
 ---
 
 ## 💰 Monetization & Revenue Model
-1. **Developer Tier**: Free for up to 10,000 monitored agent tool calls/month.
-2. **Growth Tier**: $199/month for up to 250,000 events + custom security rules.
-3. **Enterprise SLA**: Custom pricing starting at $1,500/month with on-prem deployment and SOC2 compliance automation.
+- **Usage-Based Pricing**: $0.002 per agent event inspected.
+- **Enterprise Tier**: $1,500/month for dedicated SOC-2 and HIPAA compliance dashboards.
 
 ---
 
 ## 🏆 Competitive Advantage
-Existing LLM observability tools (like LangSmith or Arize) focus on prompt evaluation and cost tracing. **AgentOps** focuses exclusively on **transaction safety, programmatic guardrails, and automated remediation**.""",
+Zero-proxy latency using lightweight eBPF/Wasm sidecars, enabling sub-millisecond enforcement directly in modern cloud-native environments.""",
 
-    """# 🥗 GreenShelf: AI Food Waste Reduction for Independent Grocers
+    """# ⚡ GreenShelf: Edge-AI Dynamic Discounting for Local Grocers
 
 ## 💡 Executive Summary
 **GreenShelf** is an edge-AI inventory and dynamic discounting platform for local supermarkets. By combining point-of-sale data with predictive expiry modeling and local weather patterns, GreenShelf automatically generates daily dynamic flash sales and notifies nearby budget-conscious shoppers.
@@ -132,7 +149,8 @@ def root():
     return {
         "message": "Business Idea Generator API is active",
         "docs": "/docs",
-        "endpoints": ["/api", "/api/health"]
+        "endpoints": ["/api", "/api/health"],
+        "auth_enabled": bool(clerk_guard)
     }
 
 
@@ -143,18 +161,20 @@ def health():
         "status": "healthy",
         "provider": provider,
         "model": model,
+        "auth_enabled": bool(clerk_guard),
         "mode": "free-tier" if provider == "gemini" else ("paid-tier" if provider == "openai" else "demo-fallback")
     }
 
 
 @app.get("/api")
-def generate_idea(
+async def generate_idea(
     topic: str = Query("AI Agents", description="Domain or topic for business idea generation"),
-    audience: Optional[str] = Query(None, description="Optional target audience focus")
+    audience: Optional[str] = Query(None, description="Optional target audience focus"),
+    user_id: str = Depends(get_current_user)
 ):
     """
     Streams an AI-generated business idea using Server-Sent Events (SSE).
-    Supports Gemini Free API, OpenAI, or Mock Demo streaming.
+    Supports Clerk JWT authentication, Gemini Free API, OpenAI, or Mock Demo streaming.
     """
     client, model, provider = get_ai_client()
 
